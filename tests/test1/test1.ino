@@ -49,6 +49,15 @@ void setup() {
     Serial.begin(115200);
     while (!Serial);
 
+    // ADCSRA (ADC Control & Status Register A)
+    //   7     6     5     4     3     2     1     0
+    //  ADEN  ADCS ADATE  ADIF  ADIE ADPS2 ADPS1 ADPS0
+    // ADPSn : ADC Prescaler Select bits : 1/(b + 1)
+    // Arduino default: 111 (16MHz/128 = 125KHz)  954us/iter
+    // this setting   : 100 (16MHz/16 = 1MHz)     211us/iter
+    ADCSRA &= 0xf8;
+    ADCSRA |= 0x04;
+
     // initialize pot values
     for (int i = 0; i < NPOTS; i++) {
         uint8_t v = (uint8_t)(analogRead(pot_pin[i]) / 8);
